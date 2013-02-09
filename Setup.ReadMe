@@ -1,0 +1,28 @@
+## För att slippa skriva sudo innan man ska programmera/debugga Arduino
+## så kan man skapa en regel för så att alla användare får tilgång till
+## Arduinos USB/Serieport
+sudo cp etc/udev/rules.d/99-ArduinoDue.rules /etc/udev/rules.d
+
+## Arduino til 64-bit linux kan hämtas med 
+wget https://github.com/downloads/arduino/Arduino/arduino-1.5.1-linux64.tgz
+
+## Arduino til 32-bit linux kan hämtas med
+wget https://github.com/downloads/arduino/Arduino/arduino-1.5.1-linux32.tgz
+
+## Min Makefile till HHelloWorld förväntar sig att arduino ligger i följande katalog
+/project/arduino-1.5.1
+
+## I HelloWorld kan man skriva <make arduino-objects> för att kompilera
+## alla Arduino filer
+
+## Efter det kan man skriva <make> för att kompilera HelloWorld till en 
+## fil som kan programmeras ned
+
+## Skriver man <make upload> så skickar man den nyss kompilerade 
+## HelloWorld.bin till Arduino
+
+## Skriver man <make picocom> så startar man en serieterminal på /dev/ttyACM0
+## som är arduinos serie-konsol (iallafall min min ubuntu)
+
+## Picocom installeras med
+sudo apt-get install picocom
