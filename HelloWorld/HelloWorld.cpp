@@ -18,7 +18,8 @@ int main() {
     Serial.begin(115200);
 
     for (;;) {
-        Serial.print("Hello World\n");
+        Serial.print("Hello World\r\n");
+	delay(5000);
 	if (serialEventRun) serialEventRun();
     }
 
