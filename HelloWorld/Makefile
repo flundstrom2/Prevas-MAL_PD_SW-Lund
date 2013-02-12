@@ -6,6 +6,8 @@ CPP = $(ARM_GCC_PREFIX)g++
 LD = $(ARM_GCC_PREFIX)ld
 AR = $(ARM_GCC_PREFIX)ar
 OBJCOPY = $(ARM_GCC_PREFIX)objcopy
+OBJDUMP = $(ARM_GCC_PREFIX)objdump
+SIZE = $(ARM_GCC_PREFIX)size
 BOSSAC = $(ARDUINO_FOLDER)/hardware/tools/bossac
 
 OBJ_FOLDER = build
@@ -87,7 +89,11 @@ CPPFLAGS += -mcpu=cortex-m3
 
 ELF2HEXFLAGS = -O binary
 
-all: $(OBJ_FOLDER) $(OBJ_FOLDER)/HelloWorld.bin
+.PHONY: arduino-clean clean upload picocom
+
+all: $(OBJ_FOLDER) $(OBJ_FOLDER)/HelloWorld.bin $(OBJ_FOLDER)/HelloWorld.size
+
+list: $(OBJ_FOLDER)/HelloWorld.list
 
 $(ARDUINO_OBJ_FOLDER)/fake_targets/arduino_system.o : $(ARDUINO_SYSTEM_C_FILES)
 	$(foreach CFILE,$(ARDUINO_SYSTEM_C_FILES), \
@@ -139,6 +145,13 @@ $(OBJ_FOLDER)/HelloWorld.elf : $(OBJ_FOLDER)/HelloWorld.o
 
 $(OBJ_FOLDER)/HelloWorld.bin : $(OBJ_FOLDER)/HelloWorld.elf
 	$(OBJCOPY) $(ELF2HEXFLAGS) $< $@
+
+$(OBJ_FOLDER)/HelloWorld.list: $(OBJ_FOLDER)/HelloWorld.elf
+	$(OBJDUMP) -h -S --disassemble --syms --line-numbers $< > $@
+
+$(OBJ_FOLDER)/HelloWorld.size:	$(OBJ_FOLDER)/HelloWorld.elf
+	@echo ================================================
+	@$(SIZE) -d --totals $<
 
 upload: $(OBJ_FOLDER)/HelloWorld.bin
 	$(BOSSAC) -p ttyACM0 -e -w -v -b $<
